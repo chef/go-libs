@@ -1,0 +1,15 @@
+---
+steps:
+  - label: ":linux: go-unit-code-coverage"
+    command:
+      - hab studio run "source .studiorc && code_coverage"
+    artifact_paths:
+      - "coverage/*"
+    expeditor:
+      secrets:
+        GITHUB_TOKEN:
+          account: github
+          field: token
+      executor:
+        docker:
+          privileged: true

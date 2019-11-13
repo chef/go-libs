@@ -1,0 +1,30 @@
+---
+# The name we use for this project when interacting with Expeditor Slack App
+project:
+  alias: go-libs
+
+# Slack channel in Chef Software slack to send notifications about build failure
+slack:
+  notify_channel: chef-ws-notify
+
+github:
+  # This deletes the GitHub PR branch after successfully merged into the release
+  delete_branch_on_merge: true
+
+merge_actions:
+  - trigger_pipeline:code_coverage:
+      ignore_labels:
+        - "Expeditor: Skip Code Coverage"
+        - "Expeditor: Skip All"
+
+pipelines:
+  - verify:
+      description: Pull Request validation tests
+  - code_coverage:
+      description: Generate code coverage reports
+      definition: .expeditor/coverage.pipeline.yml
+
+subscriptions:
+  - workload: buildkite_build_passed:{{agent_id}}:code_coverage:*
+    actions:
+      - bash:.expeditor/update_coverage.sh
