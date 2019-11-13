@@ -1,0 +1,49 @@
+#!/bin/bash
+#
+# This is the place where you can extend the funcitonality of the studio
+
+hab pkg install chef/studio-common >/dev/null
+source "$(hab pkg path chef/studio-common)/bin/studio-common"
+
+cover_dir="coverage"
+coverage_out="$cover_dir/coverage.raw"
+coverage_txt="$cover_dir/coverage.txt"
+coverage_html="$cover_dir/coverage.html"
+
+# run unit tests
+function unit_tests() {
+  install_if_missing core/go go
+  install_if_missing core/gcc gcc
+  install_if_missing core/git git
+
+  log_line "Running unit tests"
+  ( cd /src || return 1
+    mkdir -p $cover_dir
+    GO_PACKAGES=$(go list ./...)
+    go test \
+      -coverprofile=$coverage_out \
+      -covermode=atomic $GO_PACKAGES || return 1
+  )
+}
+
+# run unit tests plus code coverage analysis
+function code_coverage() {
+  ( cd /src || return 1
+    mkdir -p $cover_dir 
+    unit_tests || return 1
+    log_line "Generating coverage profile information for each function ($(yellow /src/$coverage_txt))"
+    go tool cover -func=$coverage_out -o  $coverage_txt
+    cat $coverage_txt
+    log_line "Generate HTML representation of coverage profile"
+    go tool cover -html=$coverage_out -o $coverage_html
+    log_line "HTML output written to '$(yellow /src/$coverage_html)' (open file with a web browser)"
+  )
+}
+
+# run an example of a go program that leverages the featflag go library
+function featflag_run_example() {
+  install_if_missing core/go go
+  ( cd /src || return 1
+    go run github.com/chef/go-libs/featflag/example
+  )
+}
