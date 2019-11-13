@@ -1,6 +1,6 @@
 # go-libs
-[![Build status](https://badge.buildkite.com/a5dfa44b20a6ec189a93bcbda031db452f1d964fa6836f7065.svg)](https://buildkite.com/chef/chef-go-libs-master-verify)
-[![Code coverage](https://img.shields.io/badge/coverage-97.3%25-brightgreen)](https://buildkite.com/chef/chef-go-libs-master-verify)
+[![Build status](https://badge.buildkite.com/19949c499939e46053e5b4c573d7e6bba9a0b78a870a07501b.svg)](https://buildkite.com/chef/chef-go-libs-master-verify)
+[![Code coverage](https://img.shields.io/badge/coverage-97.3%25-brightgreen)](https://buildkite.com/chef/chef-go-libs-master-code-coverage)
 
 A collection of Go libraries used across the Chef ecosystem
 
