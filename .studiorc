@@ -5,10 +5,23 @@
 hab pkg install chef/studio-common >/dev/null
 source "$(hab pkg path chef/studio-common)/bin/studio-common"
 
+# switch all go commands to use the vendor/ directory
+export GOFLAGS="-mod=vendor"
+
 cover_dir="coverage"
 coverage_out="$cover_dir/coverage.raw"
 coverage_txt="$cover_dir/coverage.txt"
 coverage_html="$cover_dir/coverage.html"
+
+# updates one or more Go dependencies
+function update_deps() {
+  install_if_missing core/go go
+  install_if_missing core/git git
+  ( cd /src || return 1
+    GOFLAGS="" go get -u "$@"
+    go mod vendor
+  )
+}
 
 # run unit tests
 function unit_tests() {
