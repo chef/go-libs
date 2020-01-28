@@ -7,7 +7,7 @@
 
 package config
 
-var (
+const (
 	ApplyExec          = "chef-apply"
 	AutomateProduct    = "Chef Automate"
 	ClientExec         = "chef-client"
