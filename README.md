@@ -60,3 +60,13 @@ func main() {
 	fmt.Printf("The client_name from the '%s' profile is: %s", creds.ClientName)
 }
 ```
+
+## `distgen`
+A simple generator for creating easily distributable Go packages.
+
+### Simple usage:
+```go
+package main
+//go:generate go run github.com/chef/go-libs/distgen
+```
+Look at the [distgen README](distgen/README.md) for more examples.
