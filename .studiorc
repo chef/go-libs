@@ -39,6 +39,16 @@ function unit_tests() {
   )
 }
 
+document "gocode_generation" <<DOC
+  Run 'go generate' for code generation
+DOC
+function gocode_generation() {
+  install_if_missing core/go go
+  ( cd /src || return 1
+    go generate ./...
+  )
+}
+
 # run unit tests plus code coverage analysis
 function code_coverage() {
   ( cd /src || return 1
