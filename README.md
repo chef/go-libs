@@ -69,4 +69,4 @@ A simple generator for creating easily distributable Go packages.
 package main
 //go:generate go run github.com/chef/go-libs/distgen
 ```
-Look at [distgen/README.md](distgen/README.md) for more example.
+Look at the [distgen README](distgen/README.md) for more examples.
