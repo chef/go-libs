@@ -17,4 +17,4 @@
 
 package dist
 
-//go:generate go run github.com/chef/go-libs/distgen global.go dist https://raw.github.com/afiune/godist/master/tiny_glob_dist.json
+//go:generate go run github.com/chef/go-libs/distgen global.go dist https://raw.github.com/chef/go-libs/master/distgen/tiny_glob_dist.json

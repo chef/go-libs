@@ -93,12 +93,8 @@ var (
 	// (by default the automation use the local `glob_dist.json`)
 	//
 	// *customizable* (args:3)
-	globDistJson = "https://raw.github.com/afiune/godist/master/glob_dist.json"
-	// chicken and egg problem! when we update this file, we need to first merge the
-	// change and then, run the go generation as a following step, maybe we can use
-	// expeditor here but for now, I will merge it with my json and then point to
-	// the real file below:
-	//globDistJson = "https://raw.github.com/chef/go-libs/master/distgen/glob_dist.json"
+	globDistJson = "https://raw.github.com/chef/go-libs/master/distgen/glob_dist.json"
+	// TODO @afiune use expeditor to run the gocode_generation helper from within an studio
 
 	// a dist template to generate global variables
 	// NOTE: @afiune in the future, if there are more customizations we
@@ -112,7 +108,7 @@ var (
 
 package {{ .GoPackage }}
 
-var (
+const (
 {{- range $varName, $varValue := .GlobalVariables }}
   {{ printf "%v = %q" $varName $varValue }}
 {{- end }}
