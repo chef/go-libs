@@ -2,6 +2,7 @@
 // Copyright 2020 Chef Software, Inc.
 // Author: Salim Afiune <afiune@chef.io>
 // Source: https://github.com/afiune/godist
+// Documentation: https://godoc.org/github.com/chef/go-libs/distgen
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,51 +31,6 @@ import (
 	"time"
 )
 
-// A simple generator for creating easily distributable Go packages.
-//
-// This automation provides an easy way to generate variables that can be configured
-// globally across multiple go packages, such as trademarks, product names, websites,
-// etc. This generator should be defined as a `go:generate` comment and run at build
-// time, using the `go generate` command.
-//
-// ### Example-1
-// Our first example involves a simple use within a single main package. First, create
-// a file called `dist_gen.go` with the following command:
-//
-// ```go
-// package main
-// //go:generate go run github.com/chef/go-libs/distgen
-// ```
-//
-// The automation will deploy a file called `dist.go` with all the variables defined
-// inside the JSON file `glob_dist.json` inside this repository. (See a real example
-// at [example-main/](example-main).)
-//
-// ### Example-2
-// In our second example involving multi-package, create a go package called `dist`
-// with a file called `gen.go` with the following command:
-//
-// ```go
-// package dist
-// //go:generate go run github.com/chef/go-libs/distgen global.go dist
-// ```
-//
-// This usage is for go projects that has multiple packages. By creating a single `dist`
-// package inside your repository, you can import the generated package in any other
-// packages. (See a real example at [example-multi-pkg/](example-multi-pkg).)
-//
-// ### Example-3
-//
-// To fully customize this automation, a user can provide a URL pointing to a custom JSON
-// file as a third parameter to the `go:generate` directive. This custom JSON file should contain the
-// global variables to generate. (See an example of a JSON file at
-// [glob_dist.json](glob_dist.json).)
-//
-// ```go
-// package dist
-// //go:generate go run github.com/chef/go-libs/distgen global.go dist https://example.com/path/to/glob_dist.json
-// ```
-
 var (
 	globalVariables map[string]string
 	tplBuf          bytes.Buffer
@@ -93,12 +49,8 @@ var (
 	// (by default the automation use the local `glob_dist.json`)
 	//
 	// *customizable* (args:3)
-	globDistJson = "https://raw.github.com/afiune/godist/master/glob_dist.json"
-	// chicken and egg problem! when we update this file, we need to first merge the
-	// change and then, run the go generation as a following step, maybe we can use
-	// expeditor here but for now, I will merge it with my json and then point to
-	// the real file below:
-	//globDistJson = "https://raw.github.com/chef/go-libs/master/distgen/glob_dist.json"
+	globDistJson = "https://raw.github.com/chef/go-libs/master/distgen/glob_dist.json"
+	// TODO @afiune use expeditor to run the gocode_generation helper from within an studio
 
 	// a dist template to generate global variables
 	// NOTE: @afiune in the future, if there are more customizations we
@@ -112,7 +64,7 @@ var (
 
 package {{ .GoPackage }}
 
-var (
+const (
 {{- range $varName, $varValue := .GlobalVariables }}
   {{ printf "%v = %q" $varName $varValue }}
 {{- end }}
