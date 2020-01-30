@@ -61,4 +61,4 @@ global variables to generate. (See an example of a JSON file at
 
 */
 
-package main
+package main // import "github.com/chef/go-libs/distgen"
