@@ -43,3 +43,14 @@ global variables to generate. (See an example of a JSON file at
 package dist
 //go:generate go run github.com/chef/go-libs/distgen global.go dist https://example.com/path/to/glob_dist.json
 ```
+
+### Using an Environment Variable
+
+The usage of an environmental variable allows for better flexibility when dealing with CI systems.
+
+The usage inside of your dist files will not change, but you can pass ENV as of your `go generate` command.
+
+Example:
+```shell script
+ DIST_FILE="https://raw.githubusercontent.com/chef/go-libs/master/distgen/tiny_glob_dist.json" go generate
+```
