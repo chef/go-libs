@@ -91,7 +91,7 @@ func main() {
 	}
 
 	file, ok := os.LookupEnv("DIST_FILE")
-	if ok != false {
+	if ok {
 		globDistJson = file
 	}
 
