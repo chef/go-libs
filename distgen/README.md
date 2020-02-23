@@ -47,12 +47,12 @@ package dist
 ### Using an Environment Variable
 
 The usage of an environmental variable allows for better flexibility when dealing with CI systems.  
-
-As we saw in the previous example, the 3rd argument that is passed to `go run` is an URI, which is used to override the default JSON file for `distgen`.
-
-The `DIST_FILE` environment performs the same functionality by overloading the default JSON file.
-
-The usage inside of your dist files will not change, but you can pass ENV as a part of your `go generate` command.
+The usage of an environmental variable allows for better flexibility when dealing with
+CI systems. As we saw in the previous example, the 3rd argument that is passed to
+`go run` is a URI, which is used to override the default JSON file for `distgen`. The
+`DIST_FILE` environment performs the same functionality by overloading the default
+JSON file. The usage inside of your dist files will not change, but you can pass ENV
+as a part of your `go generate` command.
 
 Example:
 ```shell script
