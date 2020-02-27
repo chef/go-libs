@@ -58,12 +58,11 @@ global variables to generate. (See an example of a JSON file at
 
 Using an Environment Variable
 
-The usage of an environmental variable allows for better flexibility when dealing with
-CI systems. As we saw in the previous example, the 3rd argument that is passed to
-"go run" is a URI, which is used to override the default JSON file for distgen. The
-DIST_FILE environment performs the same functionality by overloading the default
-JSON file. The usage inside of your dist files will not change, but you can pass ENV
-as a part of your "go generate" command.
+Using an environmental variable gives you more flexibility with CI systems. As we saw
+in the custom JSON file example, passing a URI to "go run" in the third argument
+overrides the default JSON file for distgen. The DIST_FILE environment performs the same
+function by overloading the default JSON file. The usage inside of your dist files will
+not change, but you can pass ENV as a part of your "go generate" command.
 
   DIST_FILE="https://raw.githubusercontent.com/chef/go-libs/master/distgen/tiny_glob_dist.json" go generate
 
