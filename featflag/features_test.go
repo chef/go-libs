@@ -31,7 +31,7 @@ import (
 
 func TestDefaultFeatureFlags(t *testing.T) {
 	assert.Equal(t,
-		"(all:CHEF_FEAT_ALL) (analyze:CHEF_FEAT_ANALYZE)",
+		"(all:CHEF_FEAT_ALL) (analyze:CHEF_FEAT_ANALYZE) (foodcritic:CHEF_FEAT_FOODCRITIC)",
 		subject.ListAll(),
 		"default list of features doesn't match",
 	)
@@ -40,6 +40,7 @@ func TestDefaultFeatureFlags(t *testing.T) {
 func TestAllFeatureFlagsDisabledByDefault(t *testing.T) {
 	assert.False(t, subject.ChefFeatAll.Enabled())
 	assert.False(t, subject.ChefFeatAnalyze.Enabled())
+	assert.False(t, subject.ChefFeatFoodcritic.Enabled())
 }
 
 func TestEnableChefAnalyzeThroughEnvVariable(t *testing.T) {
@@ -60,10 +61,28 @@ func TestEnableChefAnalyzeThroughGlobalChefAllFeatureFlag(t *testing.T) {
 	assert.True(t, subject.ChefFeatAnalyze.Enabled())
 }
 
+func TestEnableChefFoodcriticThroughEnvVariable(t *testing.T) {
+	defer os.Setenv("CHEF_FEAT_FOODCRITIC", "")
+
+	if err := os.Setenv("CHEF_FEAT_FOODCRITIC", "true"); err != nil {
+		t.Fatal("unable to set environment variable")
+	}
+	assert.True(t, subject.ChefFeatFoodcritic.Enabled())
+}
+
+func TestEnableChefFoodcriticThroughGlobalChefAllFeatureFlag(t *testing.T) {
+	defer os.Setenv("CHEF_FEAT_ALL", "")
+
+	if err := os.Setenv("CHEF_FEAT_ALL", "true"); err != nil {
+		t.Fatal("unable to set environment variable")
+	}
+	assert.True(t, subject.ChefFeatFoodcritic.Enabled())
+}
+
 func TestAddFooFeatureFlag(t *testing.T) {
 	// verify the list of feature flags before adding a new one
 	assert.Equal(t,
-		"(all:CHEF_FEAT_ALL) (analyze:CHEF_FEAT_ANALYZE)",
+		"(all:CHEF_FEAT_ALL) (analyze:CHEF_FEAT_ANALYZE) (foodcritic:CHEF_FEAT_FOODCRITIC)",
 		subject.ListAll(),
 		"default list of features doesn't match",
 	)
@@ -75,7 +94,7 @@ func TestAddFooFeatureFlag(t *testing.T) {
 	assert.Equal(t, "foo", chefFeatFoo.Key())
 	assert.False(t, chefFeatFoo.Enabled())
 	assert.Equal(t,
-		"(all:CHEF_FEAT_ALL) (analyze:CHEF_FEAT_ANALYZE) (foo:CHEF_FEAT_FOO)",
+		"(all:CHEF_FEAT_ALL) (analyze:CHEF_FEAT_ANALYZE) (foodcritic:CHEF_FEAT_FOODCRITIC) (foo:CHEF_FEAT_FOO)",
 		subject.ListAll(),
 		"the new flag should be displayed",
 	)
@@ -108,6 +127,15 @@ func TestProtectAddingAnExistingFeatureFlag(t *testing.T) {
 		subject.ChefFeatAnalyze.Equals(&featFlag),
 		"the CHEF_FEAT_ANALYZE feature flags should never change",
 	)
+
+	// and the global foodcritic feature flag
+	featFlag = subject.New("MY_FOODCRITIC_FEATURE", "foodcritic")
+	assert.Equal(t, "CHEF_FEAT_FOODCRITIC", featFlag.Env())
+	assert.Equal(t, "foodcritic", featFlag.Key())
+	assert.True(t,
+		subject.ChefFeatFoodcritic.Equals(&featFlag),
+		"the CHEF_FEAT_FOODCRITIC feature flags should never change",
+	)
 }
 
 //
@@ -117,6 +145,7 @@ func TestAccessingFlagsWithNilConfig(t *testing.T) {
 	subject.LoadConfig(nil)
 	assert.False(t, subject.ChefFeatAll.Enabled())
 	assert.False(t, subject.ChefFeatAnalyze.Enabled())
+	assert.False(t, subject.ChefFeatFoodcritic.Enabled())
 }
 
 func TestEnableFlagsFromUserConfigToml(t *testing.T) {
@@ -129,6 +158,10 @@ func TestEnableFlagsFromUserConfigToml(t *testing.T) {
 	assert.False(t,
 		subject.ChefFeatAnalyze.Enabled(),
 		"global ANALYZE feature flag should be disabled",
+	)
+	assert.False(t,
+		subject.ChefFeatFoodcritic.Enabled(),
+		"global FOODCRITIC feature flag should be disabled",
 	)
 	// even new flags created locally
 	var chefFeatXYZ = subject.New("CHEF_FEAT_XYZ", "xyz")
@@ -157,6 +190,10 @@ func TestEnableFlagsFromUserConfigToml(t *testing.T) {
 		subject.ChefFeatAnalyze.Enabled(),
 		"global ANALYZE feature flag should be enabled from loaded config.toml",
 	)
+	assert.True(t, // now it is enabled! (from the config)
+		subject.ChefFeatFoodcritic.Enabled(),
+		"global FOODCRITIC feature flag should be enabled from loaded config.toml",
+	)
 	assert.False(t,
 		chefFeatXYZ.Enabled(),
 		"local XYZ feature flag should continue to be disabled",
@@ -177,6 +214,10 @@ func TestEnableFlagsFromUserConfigToml(t *testing.T) {
 		subject.ChefFeatAnalyze.Enabled(),
 		"global ANALYZE feature flag should continue to be enabled",
 	)
+	assert.True(t, // now it is enabled! (from the config)
+		subject.ChefFeatFoodcritic.Enabled(),
+		"global FOODCRITIC feature flag should continue to be enabled",
+	)
 	assert.True(t,
 		chefFeatXYZ.Enabled(),
 		"local XYZ feature flag should be now enabled",
@@ -193,6 +234,10 @@ func TestEnableFlagsFromAppConfigToml(t *testing.T) {
 	assert.False(t,
 		subject.ChefFeatAnalyze.Enabled(),
 		"global ANALYZE feature flag should be disabled",
+	)
+	assert.False(t,
+		subject.ChefFeatFoodcritic.Enabled(),
+		"global FOODCRITIC feature flag should be disabled",
 	)
 	// even new flags created locally
 	var chefFeatXYZ = subject.New("CHEF_FEAT_XYZ", "xyz")
@@ -221,6 +266,10 @@ func TestEnableFlagsFromAppConfigToml(t *testing.T) {
 		subject.ChefFeatAnalyze.Enabled(),
 		"global ANALYZE feature flag should be enabled from loaded config.toml",
 	)
+	assert.True(t, // now it is enabled! (from the config)
+		subject.ChefFeatFoodcritic.Enabled(),
+		"global FOODCRITIC feature flag should be enabled from loaded config.toml",
+	)
 	assert.False(t,
 		chefFeatXYZ.Enabled(),
 		"local XYZ feature flag should continue to be disabled",
@@ -240,6 +289,10 @@ func TestEnableFlagsFromAppConfigToml(t *testing.T) {
 	assert.True(t, // now it is enabled! (from the config)
 		subject.ChefFeatAnalyze.Enabled(),
 		"global ANALYZE feature flag should continue to be enabled",
+	)
+	assert.True(t, // now it is enabled! (from the config)
+		subject.ChefFeatFoodcritic.Enabled(),
+		"global FOODCRITIC feature flag should continue to be enabled",
 	)
 	assert.True(t,
 		chefFeatXYZ.Enabled(),
@@ -262,6 +315,7 @@ func createUserConfigToml(t *testing.T) {
 [features]
 all = false
 analyze = true
+foodcritic = true
 xyz = false
 `)
 		userConfigFile = filepath.Join(
@@ -290,6 +344,7 @@ func createAppConfigToml(t *testing.T) {
 [features]
 all = false
 analyze = true
+foodcritic = true
 xyz = false
 `)
 		userConfigFile = filepath.Join(

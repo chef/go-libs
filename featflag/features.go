@@ -82,8 +82,14 @@ var (
 		envName:   "CHEF_FEAT_ANALYZE",
 	}
 
+	// enables foodcritic usage in Chef Workstation
+	ChefFeatFoodcritic = Feature{
+		configKey: "foodcritic",
+		envName:   "CHEF_FEAT_FOODCRITIC",
+	}
+
 	// a list of all feature flags, global and local
-	featureFlags = []Feature{ChefFeatAll, ChefFeatAnalyze}
+	featureFlags = []Feature{ChefFeatAll, ChefFeatAnalyze, ChefFeatFoodcritic}
 
 	// config instance to access feature keys
 	cfg *config.Config
