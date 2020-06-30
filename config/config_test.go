@@ -103,6 +103,7 @@ func TestNewWithNoAppConfig(t *testing.T) {
 		assert.Equal(t, true, cfg.Features["foo"], "features is not well parsed")
 		assert.Equal(t, true, cfg.Features["bar"], "features is not well parsed")
 		assert.Equal(t, false, cfg.Features["xyz"], "features is not well parsed")
+		assert.Equal(t, true, cfg.Reports.Anonymize, "reports.anonymize is not well parsed")
 	}
 }
 
@@ -118,6 +119,7 @@ func TestNewOverrideFuncs(t *testing.T) {
 		assert.Equal(t, "ssh", cfg.Connection.DefaultProtocol, "connection.default_protocol is not well parsed")
 		assert.Equal(t, 3, len(cfg.Features), "features is not well parsed")
 		assert.Equal(t, true, cfg.Features["foo"], "features is not well parsed")
+		assert.Equal(t, true, cfg.Reports.Anonymize, "report anonymization is not well parsed")
 	}
 
 	cfg, err = subject.New(
@@ -133,6 +135,8 @@ func TestNewOverrideFuncs(t *testing.T) {
 		func(c *subject.Config) { c.Features["new"] = true },
 		// deactivate a new feature
 		func(c *subject.Config) { c.Features["foo"] = false },
+		// deactivate report anonymization
+		func(c *subject.Config) { c.Reports.Anonymize = false },
 	)
 	if assert.Nil(t, err) {
 		assert.Equal(t, false, cfg.Telemetry.Enable, "telemetry.enable was not overwritten")
@@ -142,6 +146,7 @@ func TestNewOverrideFuncs(t *testing.T) {
 		assert.Equal(t, 4, len(cfg.Features), "features was not overwritten")
 		assert.Equal(t, false, cfg.Features["foo"], "features was not overwritten")
 		assert.Equal(t, true, cfg.Features["new"], "features was not overwritten")
+		assert.Equal(t, false, cfg.Reports.Anonymize, "report anonymization was not overwritten")
 	}
 }
 
@@ -358,6 +363,9 @@ xyz = false
 
 [dev]
 spinner = true
+
+[reports]
+anonymize = true
 `)
 		userConfigFile = filepath.Join(
 			subject.DefaultChefWorkstationDirectory,
@@ -434,6 +442,9 @@ ws_app_feature = true
 abc = true
 xyz = true
 foo = false
+
+[reports]
+anonymize = true
 `)
 		appConfigFile = filepath.Join(
 			subject.DefaultChefWorkstationDirectory,
@@ -466,6 +477,9 @@ dev = true
 channel = "stable"
 
 [features]
+foo = "wrong"
+
+[reports]
 foo = "wrong"
 `)
 		appConfigFile = filepath.Join(
@@ -516,4 +530,8 @@ func assertSameInformationThatDoesntChangeOften(t *testing.T, cfg *subject.Confi
 
 	// test parsing of dev settings
 	assert.Equal(t, true, cfg.Dev.Spinner, "dev.spinner is not well parsed")
+
+	// test parsing of report settings
+	assert.Equal(t, true, cfg.Reports.Anonymize, "reports.anonymize is not well parsed")
+
 }
