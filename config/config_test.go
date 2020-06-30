@@ -119,7 +119,7 @@ func TestNewOverrideFuncs(t *testing.T) {
 		assert.Equal(t, "ssh", cfg.Connection.DefaultProtocol, "connection.default_protocol is not well parsed")
 		assert.Equal(t, 3, len(cfg.Features), "features is not well parsed")
 		assert.Equal(t, true, cfg.Features["foo"], "features is not well parsed")
-		assert.Equal(t, true, cfg.Reports.Anonymize, "report anonymization was not overwritten")
+		assert.Equal(t, true, cfg.Reports.Anonymize, "report anonymization is not well parsed")
 	}
 
 	cfg, err = subject.New(
