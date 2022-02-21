@@ -6,7 +6,9 @@ import (
 
 type Telemetry struct{}
 
-func (t Telemetry) Setup() {
+// var Telemetry2 Telemetry
+
+func Setup(t Telemetry) {
 	// TODO validate required & correct keys
 	// :payload_dir #required
 	// :session_file # required
