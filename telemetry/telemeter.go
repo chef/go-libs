@@ -4,7 +4,9 @@ import (
 	"fmt"
 )
 
-func Setup() {
+type Telemetry struct{}
+
+func (t Telemetry) Setup() {
 	// TODO validate required & correct keys
 	// :payload_dir #required
 	// :session_file # required
