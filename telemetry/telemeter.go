@@ -4,23 +4,36 @@ import (
 	"fmt"
 )
 
-type Telemetry struct{}
+type Telemetry struct {
+	Payload_dir                  string
+	Session_file                 string
+	Installation_identifier_file string
+	Enabled                      bool
+	Dev_mode                     bool
+	Host_os                      string
+	Arch                         string
+	Version                      string
+}
 
-// var Telemetry2 Telemetry
+func (t Telemetry) Setup() {
 
-func Setup(t Telemetry) {
 	// TODO validate required & correct keys
-	// :payload_dir #required
-	// :session_file # required
-	// :installation_identifier_file # required
-	// :enabled  # false, not required
-	// :dev_mode # false, not required
+	// payload_dir #required
+	// session_file # required
+	// installation_identifier_file # required
+	// enabled  # false, not required
+	// dev_mode # false, not required
+	fmt.Println("testing the result-----")
+	fmt.Println(t)
+	telemetry := t
+	startUploadThread(telemetry)
+}
 
-	cfg := map[string]string{"enabled": "true", "dev_mode": "false", "payload_dir": "/Users/ngupta/.chef-workstation/telemetry", "installation_identifier_file": "/Users/ngupta/.chef-workstation/installation_id", "session_file": "/Users/ngupta/.chef-workstation/telemetry/TELEMETRY_SESSION_ID"}
-	// fmt.Println(cfg)
+func enabled(t Telemetry) bool {
+	// def enabled?
+	//   require_relative "telemetry/decision"
+	//   config[:enabled] && !Telemetry::Decision.env_opt_out?
+	// end
+	return t.Enabled && envOptOut()
 
-	fmt.Println("testing the result")
-	for key, value := range cfg {
-		fmt.Printf("%q is the key for the value %q\n", key, value)
-	}
 }
