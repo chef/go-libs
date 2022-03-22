@@ -37,7 +37,7 @@ func (t TelemetryInfo) Deliver(entry struct {
 		}
 		payload["EvantData"] = eventData
 		//     client.await.fire(payload)
-		fmt.Println(payload)
+		fmt.Println("payload-------", payload)
 	}
 }
 

@@ -2,12 +2,12 @@ package telemetry
 
 import (
 	"fmt"
+	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
 	"time"
-	"gopkg.in/yaml.v2"
 )
 
 const DEFAULT_INSTALLATION_GUID = "00000000-0000-0000-0000-000000000000"
