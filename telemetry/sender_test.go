@@ -10,7 +10,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-var Expected = []string{"/Users/ngupta/.chef-workstation/telemetry/telemetry-payload-1.yml"}
+var expected = []string{"/Users/ngupta/.chef-workstation/telemetry/telemetry-payload-1.yml"}
 
 
 	var telTests =  struct {
@@ -36,20 +36,20 @@ var Expected = []string{"/Users/ngupta/.chef-workstation/telemetry/telemetry-pay
 func TestFindSessionFiles(t *testing.T) {
 	output := findSessionFiles(telTests)
 	//fmt.Println(output)
-	if output[0] == Expected[0] {
+	if output[0] == expected[0] {
 		fmt.Println("PASS")
 	}
 }
 
 func TestRun(t *testing.T) {
-	err := run(telTests, Expected)
+	err := run(telTests, expected)
 	if err!= nil {
 		fmt.Println(err)
 	}
 }
 
 func TestLoadAndClearSession(t *testing.T) {
-	filename, _ := filepath.Abs(Expected[0])
+	filename, _ := filepath.Abs(expected[0])
 	yfile, err := ioutil.ReadFile(filename)
 	var config TelemetryPayload
 
@@ -64,7 +64,7 @@ func TestLoadAndClearSession(t *testing.T) {
 		log.Fatal(err2)
 	}
 	var result TelemetryPayload
-	result = loadAndClearSession(Expected)
+	result = loadAndClearSession(expected)
 	if &result != &config {
 		fmt.Println(err)
 	}
