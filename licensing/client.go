@@ -47,6 +47,10 @@ func invokeGetAPI(opts map[string]string, URL string) {
 		fmt.Println("Can not unmarshal JSON")
 		fmt.Println("err is", err)
 	}
+	if response.StatusCode != 200 {
+		fmt.Println("Error:", response.Message)
+		os.Exit(1)
+	}
 	// fmt.Println("response is---", PrettyPrint(response))
 	if response.Data == false {
 		fmt.Println("Error:", response.Message)
