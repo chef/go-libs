@@ -2,7 +2,6 @@ package licensing
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -27,14 +26,13 @@ func invokeGetAPI(opts map[string]string, URL string) {
 	params.Add("licenseId", opts["licenseId"])
 	params.Add("entitlementId", opts["entitlementId"])
 
-	// fmt.Println("params are :", params)
 	key, check := os.LookupEnv("CHEF_LICENSE_SERVER")
 	if check {
 		URL = key
 	}
 	res, err := http.Get(URL + "/" + CLIENT + "?" + params.Encode())
 	if err != nil {
-		fmt.Print(err.Error())
+		log.Fatal(err.Error())
 	}
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
@@ -44,17 +42,15 @@ func invokeGetAPI(opts map[string]string, URL string) {
 
 	var response Response
 	if err := json.Unmarshal(body, &response); err != nil { // Parse []byte to go struct pointer
-		fmt.Println("Can not unmarshal JSON")
-		fmt.Println("err is", err)
+		log.Println("Can not unmarshal JSON")
+		log.Fatal(err)
 	}
 	if response.StatusCode != 200 {
-		fmt.Println("Error:", response.Message)
-		os.Exit(1)
+		log.Fatal(response.Message)
 	}
 	// fmt.Println("response is---", PrettyPrint(response))
 	if response.Data == false {
-		fmt.Println("Error:", response.Message)
-		os.Exit(1)
+		log.Fatal("Error:", response.Message)
 	}
 }
 
