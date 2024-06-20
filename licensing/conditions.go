@@ -41,17 +41,17 @@ func isLicenseRestricted(licenseType string) (out bool) {
 func AllowedLicencesForAddition() []string {
 	var license_types = []string{"free", "trial", "commercial"}
 	currentTypes := currentLicenseTypes()
-	fmt.Println(license_types, currentTypes)
+	// fmt.Println(license_types, currentTypes)
 
-	fmt.Printf("contains trial ? %t\n", slices.Contains(currentTypes, ":trial"))
-	fmt.Printf("contains free ? %t\n", slices.Contains(currentTypes, ":free"))
+	// fmt.Printf("contains trial ? %t\n", slices.Contains(currentTypes, ":trial"))
+	// fmt.Printf("contains free ? %t\n", slices.Contains(currentTypes, ":free"))
 
 	if slices.Contains(currentTypes, ":trial") {
-		fmt.Println("inside trial removal")
+		// fmt.Println("inside trial removal")
 		removeItem(&license_types, "trial")
 	}
 	if slices.Contains(currentTypes, ":free") || doesUserHasActiveTrialLicense() {
-		fmt.Println("Inside free removal")
+		// fmt.Println("Inside free removal")
 		removeItem(&license_types, "free")
 	}
 

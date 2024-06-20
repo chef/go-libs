@@ -106,16 +106,21 @@ func fetchInteractively() string {
 	return ""
 }
 
+func validateLicenseWithServer(key string, suppress bool) (bool, string) {
+	var opts = make(map[string]string)
+	opts["licenseId"] = key
+	response := invokeGetAPI("validate", opts, suppress).(*ValidateResponse)
+	return response.Data, response.Message
+}
+
 func validateAndFetchLicenseType(key string) string {
 	var licenseType string
 	if key == "" {
 		return licenseType
 	}
 
-	var opts = make(map[string]string)
-	opts["licenseId"] = key
-	response := invokeGetAPI("validate", opts).(*ValidateResponse)
-	if response.Data {
+	isValid, _ := validateLicenseWithServer(key, false)
+	if isValid {
 		licenseType = fetchLicenseType([]string{key})
 	}
 

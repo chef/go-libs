@@ -18,7 +18,7 @@ var responseMap = map[string]interface{}{
 	"validate": &ValidateResponse{},
 }
 
-func invokeGetAPI(path string, opts map[string]string) interface{} {
+func invokeGetAPI(path string, opts map[string]string, suppressExp ...bool) interface{} {
 	URL := constructURL(opts["licenseId"], path)
 	// log.Println("URL: " + URL)
 
@@ -57,8 +57,12 @@ func invokeGetAPI(path string, opts map[string]string) interface{} {
 
 	// fmt.Println("After this status code: ", statusCode)
 	// fmt.Println("Message: ", message)
+	var suppress bool
+	if len(suppressExp) > 0 {
+		suppress = suppressExp[0]
+	}
 
-	if statusCode != 200 {
+	if !suppress && statusCode != 200 {
 		log.Fatal(message)
 	}
 
