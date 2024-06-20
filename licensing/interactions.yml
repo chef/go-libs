@@ -43,7 +43,6 @@ interactions:
     prompt_type: "Select"
     options: ["Skip", "Generate a new license ID", "I already have a license ID"]
     paths: [ask_for_license_id, info_of_license_types, skipped]
-    # paths: [skipped]
     response_path_map:
       "I already have a license ID": ask_for_license_id
       "Generate a new license ID": info_of_license_types
@@ -98,12 +97,11 @@ interactions:
 
   validate_license_expiration:
     action: CheckLicenseExpirationStatus
-    paths: [validation_success, prompt_license_about_to_expire, prompt_license_expired, prompt_license_expired_local_mode, prompt_license_exhausted]
+    paths: [validation_success, prompt_license_about_to_expire, prompt_license_expired, prompt_license_exhausted]
     response_path_map:
       "active": validation_success
       "about_to_expire": prompt_license_about_to_expire
       "expired": prompt_license_expired
-      "expired_in_local_mode": prompt_license_expired_local_mode
       "exhausted_license": prompt_license_exhausted
 
   prompt_error_license_addition_restricted:
@@ -232,21 +230,6 @@ interactions:
     prompt_type: "Say"
     paths: [fetch_license_id]
 
-  prompt_license_expired_local_mode:
-    messages: 
-      - |
-        ------------------------------------------------------------
-          <%= input[:pastel].yellow("! [WARNING]")%> <%= input[:license_type] %> License Expired
-
-          We hope you've been enjoying Chef <%= input[:chef_product_name] %>!
-          However, it seems like your license has expired.
-
-          Reach out to our sales team at <%= input[:pastel].underline.green("chef-sales@progress.com")%>
-          to move to commercial tier.
-        ------------------------------------------------------------
-    prompt_type: "Say"
-    paths: [fetch_license_id]
-
   prompt_license_about_to_expire:
     messages: 
       - |
@@ -281,9 +264,6 @@ interactions:
       "false": exit
     paths: [fetch_license_id, exit]
   
-  
-  
-  # NEwwwwww
   info_of_license_types:
     messages: 
       - |
@@ -359,8 +339,6 @@ interactions:
       "3. Commercial License\n": commercial_license_selection
       "4. Quit license generation": exit
 
-  # Note: The below link is specific to InSpec; as per PO there will be different link for other products.
-  #       We need to update the link for other products once we have the link or update to a common link.
   free_trial_license_selection:
     messages:
       - |
@@ -393,12 +371,5 @@ interactions:
     options: [Quit]
     choice: Select an option
     prompt_type: "SayAndSelect"
-    # paths: [exit_with_message]
     response_path_map:
       Quit: exit_with_message
-
-  # quit_option:
-  #   messages: ["Choose an option below"]
-  #   prompt_type: "Select"
-  #   options: [Quit]
-  #   paths: [exit_with_message]
