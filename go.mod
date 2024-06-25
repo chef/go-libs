@@ -4,10 +4,13 @@ go 1.18
 
 require (
 	github.com/BurntSushi/toml v0.3.1
+	github.com/cqroot/prompt v0.9.3
+	github.com/gookit/color v1.5.4
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.11.0
 	github.com/stretchr/testify v1.8.4
-	gopkg.in/yaml.v3 v3.0.1
+	github.com/theckman/yacspin v0.13.12
+	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
@@ -18,11 +21,9 @@ require (
 	github.com/charmbracelet/lipgloss v0.9.1 // indirect
 	github.com/containerd/console v1.0.4-0.20230313162750-1ae8d489ac81 // indirect
 	github.com/cqroot/multichoose v0.1.1 // indirect
-	github.com/cqroot/prompt v0.9.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
-	github.com/gookit/color v1.5.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
@@ -44,12 +45,11 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
-	github.com/theckman/yacspin v0.13.12 // indirect
 	github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778 // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.12.0 // indirect
 	golang.org/x/term v0.6.0 // indirect
 	golang.org/x/text v0.3.8 // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
