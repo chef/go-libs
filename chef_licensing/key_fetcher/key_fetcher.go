@@ -1,10 +1,13 @@
-package licensing
+package keyfetcher
 
 import (
 	"fmt"
 	"log"
 	"regexp"
 	"time"
+
+	"github.com/chef/go-libs/chef_licensing/api"
+	"github.com/chef/go-libs/chef_licensing/spinner"
 )
 
 const (
@@ -18,7 +21,7 @@ const (
 
 var ErrInvalidKeyFormat = fmt.Errorf(fmt.Sprintf("Malformed License Key passed on command line - should be %s or %s", LICENSE_KEY_PATTERN_DESC, SERIAL_KEY_PATTERN_DESC))
 
-func validateKeyFormat(key string) (matches bool) {
+func ValidateKeyFormat(key string) (matches bool) {
 	var regexes []*regexp.Regexp
 	patterns := []string{LICENSE_KEY_REGEX, SERIAL_KEY_REGEX, COMMERCIAL_KEY_REGEX}
 
@@ -37,50 +40,50 @@ func validateKeyFormat(key string) (matches bool) {
 	return
 }
 
-// func prompt_license_addition_restricted(license_type, existing_license_keys_in_file)
 func promptLicenseAdditionRestricted(licenseType string, existingLicenseKeysInFile []string) {
 	log.Println("License Key fetcher - prompting license addition restriction")
-
+	UpdatePromptInputs(map[string]string{
+		"LicenseID":   existingLicenseKeysInFile[len(existingLicenseKeysInFile)-1],
+		"LicenseType": licenseType,
+	})
+	StartInteractions("prompt_license_addition_restriction")
 }
 
-func isLicenseActive(keys []string) (out bool) {
-	log.Println("License Key fetcher - checking if licenses are active")
+func isLicenseActive(keys []string) (out bool, promptStartID string) {
+	if len(keys) == 0 {
+		return
+	}
 
-	spinner, err := GetSpinner()
+	spinner, err := spinner.GetSpinner()
 	if err != nil {
 		log.Println("Unable to start the spinner")
 	}
 	_ = spinner.Start()
 	spinner.Message("In progress")
-	license := *fetchLicenseClient(keys)
+
+	licenseClient, _ := api.GetClient().GetLicenseClient(keys)
+	if licenseClient == nil {
+		return false, ""
+	}
 
 	// Intentional lag of 2 seconds when license is expiring or expired
-	if isExpiringOrExpired(license) {
+	if licenseClient.IsExpiringOrExpired() {
 		time.Sleep(2 * time.Second)
 	}
 
-	if isExpired(license) || haveGrace(license) {
-		// if ChefLicensing::Context.local_licensing_service?
-		//   config[:start_interaction] = :prompt_license_expired_local_mode
-		// else
-		//   config[:start_interaction] = :prompt_license_expired
-		// end
-		// prompt_fetcher.config = config
-		// false
+	if licenseClient.IsExpired() || licenseClient.HaveGrace() {
+		promptStartID = "prompt_license_expired"
 		out = false
-	} else if isAboutToExpire(license) {
-		// config[:start_interaction] = :prompt_license_about_to_expire
-		// prompt_fetcher.config = config
+	} else if licenseClient.IsAboutToExpire() {
+		promptStartID = "prompt_license_about_to_expire"
 		out = false
-	} else if isExhausted(license) && (license.License == "commercial" || license.License == "free") {
-		// config[:start_interaction] = :prompt_license_exhausted
-		// prompt_fetcher.config = config
-		// false
+	} else if licenseClient.IsExhausted() && (licenseClient.IsCommercial() || licenseClient.IsFree()) {
+		promptStartID = "prompt_license_exhausted"
 		out = false
 	} else {
 		// If license is not expired or expiring, return true. But if the license is not commercial, warn the user.
-		if license.License != "commercial" {
-			// config[:start_interaction] = :warn_non_commercial_license unless license.license_type.downcase == "commercial"
+		if licenseClient.IsCommercial() {
+			promptStartID = "warn_non_commercial_license"
 		}
 		out = true
 	}
@@ -93,10 +96,8 @@ func isLicenseActive(keys []string) (out bool) {
 	}
 
 	time.Sleep(2 * time.Second)
-
 	spinner.Message("Done")
-
 	_ = spinner.Stop()
 
-	return out
+	return out, promptStartID
 }

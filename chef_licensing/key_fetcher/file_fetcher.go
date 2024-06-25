@@ -1,4 +1,4 @@
-package licensing
+package keyfetcher
 
 import (
 	"log"
@@ -7,6 +7,7 @@ import (
 	"slices"
 	"time"
 
+	"github.com/chef/go-libs/chef_licensing/config"
 	"gopkg.in/yaml.v2"
 )
 
@@ -17,34 +18,28 @@ const (
 var LICENSE_TYPES []string = []string{"free", "trial", "commercial"}
 
 type LicenseFileData struct {
-	Licenses          []Licenses `yaml:":licenses"`
-	FileFormatVersion string     `yaml:":file_format_version"`
-	LicenseServerURL  string     `yaml:":license_server_url"`
+	Licenses          []LicenseData `yaml:":licenses"`
+	FileFormatVersion string        `yaml:":file_format_version"`
+	LicenseServerURL  string        `yaml:":license_server_url"`
 }
 
-type Licenses struct {
+type LicenseData struct {
 	LicenseKey  string `yaml:":license_key"`
 	LicenseType string `yaml:":license_type"`
 	UpdateTime  string `yaml:":update_time"`
 }
 
-func licenseFileFetch() []string {
-	licenseKey := []string{}
-	li := *ReadLicenseKeyFile()
-
-	for i := 0; i < len(li.Licenses); i++ {
-		licenseKey = append(licenseKey, li.Licenses[i].LicenseKey)
+func FetchLicenseKeysBasedOnType(licenseType string) (out []string) {
+	content := readLicenseKeyFile()
+	for _, key := range content.Licenses {
+		if key.LicenseType == licenseType {
+			out = append(out, key.LicenseKey)
+		}
 	}
-
-	return licenseKey
+	return
 }
 
-func licenseFilePath() string {
-	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".chef/licenses.yaml")
-}
-
-func ReadLicenseKeyFile() *LicenseFileData {
+func readLicenseKeyFile() *LicenseFileData {
 	li := &LicenseFileData{}
 	filePath := licenseFilePath()
 	info, _ := os.Stat(filePath)
@@ -64,14 +59,20 @@ func ReadLicenseKeyFile() *LicenseFileData {
 	return li
 }
 
-func fetchLicenseKeysBasedOnType(licenseType string) (out []string) {
-	content := ReadLicenseKeyFile()
-	for _, key := range content.Licenses {
-		if key.LicenseType == licenseType {
-			out = append(out, key.LicenseKey)
-		}
+func licenseFileFetch() []string {
+	licenseKey := []string{}
+	li := *readLicenseKeyFile()
+
+	for i := 0; i < len(li.Licenses); i++ {
+		licenseKey = append(licenseKey, li.Licenses[i].LicenseKey)
 	}
-	return
+
+	return licenseKey
+}
+
+func licenseFilePath() string {
+	home, _ := os.UserHomeDir()
+	return filepath.Join(home, ".chef/licenses.yaml")
 }
 
 func persistAndConcat(newKeys []string, licenseType string) {
@@ -79,13 +80,13 @@ func persistAndConcat(newKeys []string, licenseType string) {
 		log.Fatal("License type " + licenseType + " is not a valid license type.")
 	}
 
-	license := Licenses{
+	license := LicenseData{
 		LicenseKey:  newKeys[0],
 		LicenseType: ":" + licenseType,
 		UpdateTime:  time.Now().Format("2006-01-02T15:04:05-07:00"),
 	}
 
-	fileContent := ReadLicenseKeyFile()
+	fileContent := readLicenseKeyFile()
 
 	var found bool
 	for _, key := range fileContent.Licenses {
@@ -108,7 +109,7 @@ func updateDefaultsOnLicenseFile(content *LicenseFileData) {
 	}
 
 	if content.LicenseServerURL == "" {
-		config := GetConfig()
+		config := config.GetConfig()
 		content.LicenseServerURL = config.LicenseServerURL
 	}
 }
@@ -125,5 +126,4 @@ func saveLicenseFile(content *LicenseFileData) {
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
-
 }

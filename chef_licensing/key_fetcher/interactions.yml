@@ -147,19 +147,19 @@ interactions:
   trial_restriction_message:
     prompt_type: "Say"
     messages:
-      - Please generate a Free Tier or Commercial License by running {{printBoldText .ChefExecutableName "license add"}}.
+      - Please generate a Free Tier or Commercial License by running {{printBoldText .ExecutableName "license add"}}.
     paths: [exit_with_message]
 
   free_restriction_message:
     prompt_type: "Say"
     messages:
-      - Please generate a Trial or Commercial License by running {{printBoldText .ChefExecutableName "license add"}}.
+      - Please generate a Trial or Commercial License by running {{printBoldText .ExecutableName "license add"}}.
     paths: [exit_with_message]
 
   only_commercial_allowed_message:
     prompt_type: "Say"
     messages:
-      - Please generate a Commercial License by running {{printBoldText .ChefExecutableName "license add"}}.
+      - Please generate a Commercial License by running {{printBoldText .ExecutableName "license add"}}.
     paths: [exit_with_message]
 
   validation_success:
@@ -224,7 +224,7 @@ interactions:
           Reach out to our sales team at {{printHyperlink "chef-sales@progress.com"}}
           to move to commercial tier.
 
-          To get a new license, run {{printBoldText .ChefExecutableName "license add"}}
+          To get a new license, run {{printBoldText .ExecutableName "license add"}}
           and select a license type.
         ------------------------------------------------------------
     prompt_type: "Say"
@@ -345,7 +345,7 @@ interactions:
         {{printInColor "yellow" "!"}} Kindly complete the user registration at {{printInColor "blue" "https://www.chef.io/license-generation-free-trial" true}}
         
         Once you submit the details, you will receive the license ID on the email id you provided.
-
+        
     choice: Select an option
     options: [
       Validate license now,
@@ -373,3 +373,69 @@ interactions:
     prompt_type: "SayAndSelect"
     response_path_map:
       Quit: exit_with_message
+
+  #SFSFSFSF
+  prompt_license_addition_restriction:
+    action: SetLicenseInfo
+    paths: [prompt_error_license_addition_restricted]
+
+  prompt_error_license_addition_restricted:
+    messages: ['{{printInColor "red" "✖"}} [Error] License validation failed.']
+    prompt_type: "Error"
+    paths: [license_restriction_header_text]
+
+  license_restriction_header_text:
+    action: DetermineRestrictionType
+    paths: [trial_already_exist_message, free_license_already_exist_message, active_trial_exist_message]
+    response_path_map:
+      "trial_restriction": trial_already_exist_message
+      "free_restriction": free_license_already_exist_message
+      "active_trial_restriction": active_trial_exist_message
+
+  trial_already_exist_message:
+    messages: ["A Trial License already exists with following details:"]
+    prompt_type: "Say"
+    paths: [add_license_info_in_restriction_flow]
+
+  free_license_already_exist_message:
+    messages: ["A Free Tier License already exists with following details:"]
+    prompt_type: "Say"
+    paths: [add_license_info_in_restriction_flow]
+
+  active_trial_exist_message:
+    messages: ["An active Trial License already exists with following details."]
+    prompt_type: "Say"
+    paths: [add_license_info_in_restriction_flow]
+
+  add_license_info_in_restriction_flow:
+    action: DisplayLicenseInfo
+    paths: [license_restriction_foot_text]
+
+  license_restriction_foot_text:
+    action: FetchLicenseTypeRestricted
+    paths: [trial_restriction_message, free_restriction_message, only_commercial_allowed_message]
+    response_path_map:
+      "trial": trial_restriction_message
+      "free": free_restriction_message
+      "trial_and_free": only_commercial_allowed_message
+
+  trial_restriction_message:
+    prompt_type: "Say"
+    messages:
+      - | 
+        Please generate a Free Tier or Commercial License by running {{printInColor "" PromptInput.ExecutableName false true}} license add.
+    paths: [exit_with_message]
+
+  free_restriction_message:
+    prompt_type: "Say"
+    messages:
+      - |
+        Please generate a Trial or Commercial License by running {{printInColor "" PromptInput.ExecutableName false true}} license add.
+    paths: [exit_with_message]
+
+  only_commercial_allowed_message:
+    prompt_type: "say"
+    messages:
+      - |
+        Please generate a Commercial License by running {{printInColor "" PromptInput.ExecutableName false true}} license add.
+    paths: [exit_with_message]
