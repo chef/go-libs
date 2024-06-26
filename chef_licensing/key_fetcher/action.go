@@ -40,7 +40,7 @@ func (ad ActionDetail) Say() string {
 }
 
 func (ad ActionDetail) TimeoutSelect() string {
-	timeoutContext, cancel := context.WithTimeout(context.Background(), time.Second*6)
+	timeoutContext, cancel := context.WithTimeout(context.Background(), time.Second*60)
 	defer cancel()
 
 	done := make(chan struct{})
