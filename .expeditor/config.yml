@@ -13,6 +13,7 @@ github:
 
 pipelines:
   - verify:
+      public: true
       description: Pull Request validation tests
   - code_coverage:
       description: Generate code coverage reports
