@@ -71,3 +71,7 @@ package main
 //go:generate go run github.com/chef/go-libs/distgen
 ```
 Look at the [distgen README](distgen/README.md) for more examples.
+
+# Copyright
+
+See [COPYRIGHT.md](./COPYRIGHT.md).
