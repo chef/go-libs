@@ -15,7 +15,7 @@ coverage_html="$cover_dir/coverage.html"
 
 # updates one or more Go dependencies
 function update_deps() {
-  install_if_missing core/go go
+  install_if_missing core/go26 go
   install_if_missing core/git git
   ( cd /src || return 1
     GOFLAGS="" go get -u "$@"
@@ -25,7 +25,7 @@ function update_deps() {
 
 # run unit tests
 function unit_tests() {
-  install_if_missing core/go go
+  install_if_missing core/go26 go
   install_if_missing core/gcc gcc
   install_if_missing core/git git
 
@@ -43,7 +43,7 @@ document "gocode_generation" <<DOC
   Run 'go generate' for code generation
 DOC
 function gocode_generation() {
-  install_if_missing core/go go
+  install_if_missing core/go26 go
   ( cd /src || return 1
     go generate ./...
   )
@@ -65,7 +65,7 @@ function code_coverage() {
 
 # run an example of a go program that leverages the featflag go library
 function featflag_run_example() {
-  install_if_missing core/go go
+  install_if_missing core/go26 go
   ( cd /src || return 1
     go run github.com/chef/go-libs/featflag/example
   )
