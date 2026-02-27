@@ -29,6 +29,10 @@ import (
 )
 
 func TestFindCredentialsFileNotFound(t *testing.T) {
+	savedHome := os.Getenv("HOME")
+	os.Setenv("HOME", t.TempDir())
+	defer os.Setenv("HOME", savedHome)
+
 	credsFile, err := subject.FindCredentialsFile()
 	if assert.NotNil(t, err) {
 		assert.Contains(t, err.Error(), "file 'credentials' not found")
@@ -72,6 +76,10 @@ func TestNewDefaultOtherKindOfError(t *testing.T) {
 }
 
 func TestNewErrorCredsNotFound(t *testing.T) {
+	savedHome := os.Getenv("HOME")
+	os.Setenv("HOME", t.TempDir())
+	defer os.Setenv("HOME", savedHome)
+
 	creds, err := subject.New("dev")
 	if assert.NotNil(t, err) {
 		assert.Contains(t, err.Error(), "credentials file not found")
@@ -113,7 +121,7 @@ func TestNewMalformedError(t *testing.T) {
 	if assert.NotNil(t, err) {
 		assert.Contains(t, err.Error(), "unable to parse credentials file.")
 		assert.Contains(t, err.Error(), "verify the format of the credentials file by following this documentation")
-		assert.Contains(t, err.Error(), "cannot load TOML value")
+		assert.Contains(t, err.Error(), "incompatible types")
 		assert.Equal(t, subject.Credentials{}, creds)
 	}
 }
@@ -293,7 +301,7 @@ func TestFromViperMalformedError(t *testing.T) {
 	if assert.NotNil(t, err) {
 		assert.Contains(t, err.Error(), "unable to parse credentials file.")
 		assert.Contains(t, err.Error(), "verify the format of the credentials file by following this documentation")
-		assert.Contains(t, err.Error(), "error(s) decoding")
+		assert.Contains(t, err.Error(), "decoding failed")
 		assert.Equal(t, subject.Credentials{}, creds)
 	}
 }

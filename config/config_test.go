@@ -85,7 +85,8 @@ func TestNewMalformedConfigError(t *testing.T) {
 		assert.Contains(t, err.Error(), "unable to parse config.toml file.")
 		assert.Contains(t, err.Error(), "verify the format of the configuration file by following this documentation")
 		assert.Contains(t, err.Error(), "https://www.chef.sh/docs/reference/config/")
-		assert.Contains(t, err.Error(), "(last key parsed 'chef.cookbook_repo_paths'): expected a comma or array terminator")
+		assert.Contains(t, err.Error(), "chef.cookbook_repo_paths")
+		assert.Contains(t, err.Error(), "expected a comma")
 		assert.Equal(t, subject.Config{}, cfg, "should return an empty config")
 	}
 }
@@ -301,7 +302,7 @@ func TestAppMalformedConfigError(t *testing.T) {
 		assert.Contains(t, err.Error(), "unable to parse .app-managed-config.toml file.")
 		assert.Contains(t, err.Error(), "there must be a problem with the Chef Workstation App, verify the format of the configuration by following this documentation")
 		assert.Contains(t, err.Error(), "https://www.chef.sh/docs/reference/config/")
-		assert.Contains(t, err.Error(), "toml: cannot load TOML value of type string into a Go boolea")
+		assert.Contains(t, err.Error(), "incompatible types: TOML value has type string")
 	}
 }
 
