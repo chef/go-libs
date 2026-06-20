@@ -1,5 +1,5 @@
 //
-// Copyright 2019 Chef Software, Inc.
+// Copyright (c) 2019-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 // Author: Salim Afiune <afiune@chef.io>
 //
 // Licensed under the Apache License, Version 2.0 (the "License");

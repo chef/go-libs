@@ -1,5 +1,5 @@
 //
-// Copyright 2020 Chef Software, Inc.
+// Copyright (c) 2019-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 // Author: Salim Afiune <afiune@chef.io>
 // Source: https://github.com/afiune/godist
 // Documentation: https://godoc.org/github.com/chef/go-libs/distgen
